@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner App</title>
+</head>
+<body>
+    <h1>Scanner App</h1>
+    <input type="text" id="scannerInput" placeholder="Scan QR code here" autofocus>
+    <button id="scanInBtn">SCAN IN</button>
+    <button id="scanOutBtn">SCAN OUT</button>
+    <script>
+        document.getElementById('scannerInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleScan(e.target.value);
+                e.target.value = '';  // Clear the input field
+            }
+        });
+
+        document.getElementById('scanInBtn').addEventListener('click', function () {
+            sendScanData('IN');
+        });
+
+        document.getElementById('scanOutBtn').addEventListener('click', function () {
+            sendScanData('OUT');
+        });
+
+        function handleScan(data) {
+            console.log('Scanned data:', data);
+            // Here you can process the scanned data or send it to the server
+        }
+
+        function sendScanData(type) {
+            const scannerInput = document.getElementById('scannerInput').value;
+            if (scannerInput.trim() === '') {
+                alert('Please scan a QR code first.');
+                return;
+            }
+            const payload = {
+                data: scannerInput,
+                type: type
+            };
+            fetch('/api/scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
